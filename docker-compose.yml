@@ -1,0 +1,39 @@
+version: "3.5"
+services:
+    webserver:    
+      image: nginx:alpine
+      container_name: php-webserver
+      working_dir: /application
+      volumes:
+        - ./app:/application
+        - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "8003:80"
+
+    php-fpm:
+      build: docker/php-fpm
+      container_name: lptest-php-fpm
+      working_dir: /application
+      volumes:
+        - ./app:/application
+
+    mariadb:
+      image: mariadb:10.4
+      container_name: php-mariadb
+      environment:
+        - MYSQL_ROOT_PASSWORD=novell
+        - MYSQL_DATABASE=php-db
+        - MYSQL_USER=admin
+        - MYSQL_PASSWORD=novell   
+
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: php-myadmin
+      ports:
+        - 8001:80
+      environment:
+        PMA_HOST: mariadb
+        PMA_USER: root
+        PMA_PASSWORD: novell
+
+
